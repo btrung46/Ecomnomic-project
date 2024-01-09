@@ -13,18 +13,37 @@
                             <span class="text-decoration-line-through">{{product_detail.price}}</span>
                             <span>${{product_detail.price_sale}}</span>
                         {% else %}
-                        <span>${{product_detail.price}}</span>
+                        <span>${{product_detail.price}}</span> <br>
+                        {{product_detail.id}}
                         {% endif %}
                     </div>
                     <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
-                    <div class="d-flex">
-                        <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                        <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                            <i class="bi-cart-fill me-1"></i>
-                            Add to cart
-                        </button>
-                        &nbsp;
-                        <div><a class="btn btn-outline-dark mt-auto" href="{% url 'home' %}" >Home</a></div>
+                    <div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-4">Quantity: </div>
+                            <br>
+                            <br>
+                            <div class="col-md-8">
+                                <select class="form-select form-select-sm" id="qty-cart">
+                                    <option selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>z
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="d-flex">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button" value="{{product_detail.id}}" id="add-cart">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </button>
+                            &nbsp;
+                            <div><a class="btn btn-outline-dark mt-auto" href="{% url 'home' %}" >Home</a></div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -35,5 +54,28 @@
     <br>
     <br>
     <!-- Related items section-->
+
+    <script>
+        $(document).on('click','#add-cart', function(e){
+            e.preventDefault();
+            $.ajax({
+                type : 'POST',
+                url: '{% url "cart_add" %}',
+                data :{
+                    product_id: $('#add-cart').val(),
+                    product_qty: $('#qty-cart option:selected').text(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post',
+                },
+                success: function(json){
+                    // console.log(json)
+                    document.getElementById('cart_quatity').textContent = json.qty
+                },
+                error: function(xhr,errmsg, err){
+
+                }
+            });
+        })
+    </script>
 {% endblock  %}
     
